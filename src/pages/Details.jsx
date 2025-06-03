@@ -5,20 +5,28 @@ import { Card, Button } from "react-bootstrap";
 const Details = () => {
   const { type, id } = useParams();
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const response = await fetch(`https://www.swapi.tech/api/${type}/${id}`);
-        const data = await response.json();
-        setData(data.result.properties);
-      } catch (error) {
-        console.error(`Error fetching ${type} details:`, error);
+        const response = await fetch(`https://swapi.dev/api/${type}/${id}/`);
+        if (!response.ok) throw new Error("Failed to fetch data");
+        const result = await response.json();
+        setData(result);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchDetails();
   }, [type, id]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="container">
@@ -26,14 +34,14 @@ const Details = () => {
         <Card>
           <Card.Img variant="top" src={`https://starwars-visualguide.com/assets/img/${type}/${id}.jpg`} />
           <Card.Body>
-            <Card.Title>{data.name}</Card.Title>
+            <Card.Title>{data.name || "Unknown Name"}</Card.Title>
             <Card.Text>
-              <strong>Description:</strong> {data.description || "No description available"}
+              <strong>Details:</strong> {JSON.stringify(data, null, 2)}
             </Card.Text>
           </Card.Body>
         </Card>
       ) : (
-        <p>Loading...</p>
+        <p>No data available</p>
       )}
     </div>
   );

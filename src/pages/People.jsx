@@ -1,6 +1,7 @@
 import React from "react";
 import { useStarWarsContext } from "../context/StarWarsContext";
 import { Card, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const People = () => {
   const { state, dispatch } = useStarWarsContext();
@@ -15,8 +16,14 @@ const People = () => {
               <Card.Img variant="top" src={`https://starwars-visualguide.com/assets/img/characters/${person.uid}.jpg`} />
               <Card.Body>
                 <Card.Title>{person.name}</Card.Title>
-                <Button variant="primary" onClick={() => dispatch({ type: "TOGGLE_FAVORITE", payload: { id: person.uid, type: "people" } })}>
-                  {state.favorites.some((fav) => fav.id === person.uid) ? "Remove from Favorites" : "Add to Favorites"}
+                <Button as={Link} to={`/details/${person.uid}`} variant="info">
+                  View Details
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => dispatch({ type: "TOGGLE_FAVORITE", payload: { id: person.uid, name: person.name, type: "people" } })}
+                >
+                  {state.favorites.some((fav) => fav.id === person.uid) ? `Remove ${person.name} from Favorites` : `Add ${person.name} to Favorites`}
                 </Button>
               </Card.Body>
             </Card>

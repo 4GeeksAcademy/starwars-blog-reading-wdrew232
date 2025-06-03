@@ -1,6 +1,7 @@
 import React from "react";
 import { useStarWarsContext } from "../context/StarWarsContext";
 import { Card, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const Planets = () => {
   const { state, dispatch } = useStarWarsContext();
@@ -9,14 +10,20 @@ const Planets = () => {
     <div className="container">
       <h2>Planets</h2>
       <div className="row">
-        {state.planets.map((planets) => (
-          <div className="col-md-4" key={planets.uid}>
+        {state.planets.map((planet) => (
+          <div className="col-md-4" key={planet.uid}>
             <Card>
-              <Card.Img variant="top" src={`https://starwars-visualguide.com/assets/img/planets/${planets.uid}.jpg`} />
+              <Card.Img variant="top" src={`https://starwars-visualguide.com/assets/img/planets/${planet.uid}.jpg`} />
               <Card.Body>
-                <Card.Title>{planets.name}</Card.Title>
-                <Button variant="primary" onClick={() => dispatch({ type: "TOGGLE_FAVORITE", payload: { id: planets.uid, type: "planets" } })}>
-                  {state.favorites.some((fav) => fav.id === planets.uid) ? "Remove from Favorites" : "Add to Favorites"}
+                <Card.Title>{planet.name}</Card.Title>
+                <Button as={Link} to={`/details/${planet.uid}`} variant="info">
+                  View Details
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => dispatch({ type: "TOGGLE_FAVORITE", payload: { id: planet.uid, name: planet.name, type: "planets" } })}
+                >
+                  {state.favorites.some((fav) => fav.id === planet.uid) ? `Remove ${planet.name} from Favorites` : `Add ${planet.name} to Favorites`}
                 </Button>
               </Card.Body>
             </Card>
