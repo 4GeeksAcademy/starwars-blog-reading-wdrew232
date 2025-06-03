@@ -12,7 +12,7 @@ const Details = () => {
     const fetchDetails = async () => {
       try {
         const response = await fetch(`https://swapi.dev/api/${type}/${id}/`);
-        if (!response.ok) throw new Error("Failed to fetch data");
+        if (!response.ok) throw new Error(`Failed to fetch ${type} details`);
         const result = await response.json();
         setData(result);
       } catch (err) {

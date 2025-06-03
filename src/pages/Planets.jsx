@@ -16,14 +16,16 @@ const Planets = () => {
               <Card.Img variant="top" src={`https://starwars-visualguide.com/assets/img/planets/${planet.uid}.jpg`} />
               <Card.Body>
                 <Card.Title>{planet.name}</Card.Title>
-                <Button as={Link} to={`/details/${planet.uid}`} variant="info">
+                <Button as={Link} to={`/details/planets/${planet.uid}`} variant="info">
                   View Details
                 </Button>
                 <Button
                   variant="primary"
                   onClick={() => dispatch({ type: "TOGGLE_FAVORITE", payload: { id: planet.uid, name: planet.name, type: "planets" } })}
                 >
-                  {state.favorites.some((fav) => fav.id === planet.uid) ? `Remove ${planet.name} from Favorites` : `Add ${planet.name} to Favorites`}
+                  {state.favorites.some((fav) => fav.id === planet.uid && fav.type === "planets") 
+                    ? `Remove ${planet.name} from Favorites` 
+                    : `Add ${planet.name} to Favorites`}
                 </Button>
               </Card.Body>
             </Card>
