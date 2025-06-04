@@ -32,7 +32,7 @@ export const StarWarsProvider = ({ children }) => {
   useEffect(() => {
     const fetchData = async (type) => {
       try {
-        const response = await fetch(`https://swapi.dev/api/${type}/`);
+        const response = await fetch(`https://swapi.tech/api/${type}/`);
         if (!response.ok) throw new Error(`Failed to fetch ${type}`);
         const data = await response.json();
         dispatch({ type: "SET_DATA", payload: { type, data: data.results } });

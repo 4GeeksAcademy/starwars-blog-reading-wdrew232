@@ -11,7 +11,7 @@ const Details = () => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const response = await fetch(`https://swapi.dev/api/${type}/${id}/`);
+        const response = await fetch(`https://swapi.tech/api/${type}/${id}/`);
         if (!response.ok) throw new Error(`Failed to fetch ${type} details`);
         const result = await response.json();
         setData(result);
@@ -34,7 +34,7 @@ const Details = () => {
         <Card>
           <Card.Img variant="top" src={`https://starwars-visualguide.com/assets/img/${type}/${id}.jpg`} />
           <Card.Body>
-            <Card.Title>{data.name || "Unknown Name"}</Card.Title>
+            <Card.Title>{data.name}</Card.Title>
             <Card.Text>
               <strong>Details:</strong> {JSON.stringify(data, null, 2)}
             </Card.Text>
