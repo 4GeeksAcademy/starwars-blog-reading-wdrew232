@@ -1,50 +1,64 @@
-import React, { createContext, useReducer, useEffect } from "react";
+import React from "react";
+import { useStarWarsContext } from "../context/StarWarsContext";
+import { Card, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
-const StarWarsContext = createContext();
+const Favorites = () => {
+  const { state, dispatch } = useStarWarsContext();
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "SET_DATA":
-      return { 
-        ...state, 
-        [action.payload.type]: action.payload.data 
-      };
+  const { favorites } = state;
 
-    case "TOGGLE_FAVORITE":
-      const { id, name, type } = action.payload;
-      const isFavorite = state.favorites.some((fav) => fav.id === id && fav.type === type);
-
-      return {
-        ...state,
-        favorites: isFavorite
-          ? state.favorites.filter((fav) => !(fav.id === id && fav.type === type))
-          : [...state.favorites, { id, name, type }],
-      };
-
-    default:
-      return state;
+  if (favorites.length === 0) {
+    return <div className="container"><h2>Favorites</h2><p>No favorites yet.</p></div>;
   }
+
+  return (
+    <div className="container">
+      <h2>Your Favorites</h2>
+      <div className="row">
+        {favorites.map((fav) => (
+          <div className="col-md-4 mb-4" key={`${fav.type}-${fav.id}`}>
+            <Card>
+              <Card.Img
+                variant="top"
+                src={`https://starwars-visualguide.com/assets/img/${fav.type}/${fav.id}.jpg`}
+                onError={(e) =>
+                  (e.target.src = "https://starwars-visualguide.com/assets/img/big-placeholder.jpg")
+                }
+              />
+              <Card.Body>
+                <Card.Title>{fav.name || "Unnamed Item"}</Card.Title>
+                <p className="text-capitalize">{fav.type}</p>
+                <Button
+                  as={Link}
+                  to={`/details/${fav.type}/${fav.id}`}
+                  variant="info"
+                  className="me-2"
+                >
+                  View Details
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() =>
+                    dispatch({
+                      type: "TOGGLE_FAVORITE",
+                      payload: {
+                        id: fav.id,
+                        name: fav.name,
+                        type: fav.type,
+                      },
+                    })
+                  }
+                >
+                  Remove from Favorites
+                </Button>
+              </Card.Body>
+            </Card>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
-export const StarWarsProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, { people: [], planets: [], vehicles: [], favorites: [] });
-
-  useEffect(() => {
-    const fetchData = async (type) => {
-      try {
-        const response = await fetch(`https://swapi.tech/api/${type}/`);
-        if (!response.ok) throw new Error(`Failed to fetch ${type}`);
-        const data = await response.json();
-        dispatch({ type: "SET_DATA", payload: { type, data: data.results } });
-      } catch (error) {
-        console.error(`Error fetching ${type}:`, error);
-      }
-    };
-
-    ["people", "planets", "vehicles"].forEach((type) => fetchData(type));
-  }, []);
-
-  return <StarWarsContext.Provider value={{ state, dispatch }}>{children}</StarWarsContext.Provider>;
-};
-
-export const useStarWarsContext = () => React.useContext(StarWarsContext);
+export default Favorites;

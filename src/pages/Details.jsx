@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Card, Button } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 
 const Details = () => {
   const { type, id } = useParams();
@@ -11,10 +11,10 @@ const Details = () => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const response = await fetch(`https://swapi.tech/api/${type}/${id}/`);
+        const response = await fetch(`https://www.swapi.tech/api/${type}/${id}`);
         if (!response.ok) throw new Error(`Failed to fetch ${type} details`);
         const result = await response.json();
-        setData(result);
+        setData(result.result.properties);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -25,24 +25,38 @@ const Details = () => {
     fetchDetails();
   }, [type, id]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) return <div className="container"><p>Loading...</p></div>;
+  if (error) return <div className="container"><p>Error: {error}</p></div>;
 
   return (
     <div className="container">
-      {data ? (
-        <Card>
-          <Card.Img variant="top" src={`https://starwars-visualguide.com/assets/img/${type}/${id}.jpg`} />
-          <Card.Body>
-            <Card.Title>{data.name}</Card.Title>
-            <Card.Text>
-              <strong>Details:</strong> {JSON.stringify(data, null, 2)}
-            </Card.Text>
-          </Card.Body>
-        </Card>
-      ) : (
-        <p>No data available</p>
-      )}
+      <Card className="mt-4">
+        <Card.Img
+          variant="top"
+          src={`https://starwars-visualguide.com/assets/img/${type}/${id}.jpg`}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "https://starwars-visualguide.com/assets/img/big-placeholder.jpg";
+          }}
+        />
+        <Card.Body>
+          <Card.Title className="text-capitalize">
+            {data?.name || "Details"}
+          </Card.Title>
+          <hr />
+          {data ? (
+            <div>
+              {Object.entries(data).map(([key, value]) => (
+                <p key={key}>
+                  <strong className="text-capitalize">{key.replace(/_/g, ' ')}:</strong> {value}
+                </p>
+              ))}
+            </div>
+          ) : (
+            <p>No details available</p>
+          )}
+        </Card.Body>
+      </Card>
     </div>
   );
 };

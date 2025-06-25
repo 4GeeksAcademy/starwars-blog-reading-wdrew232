@@ -11,20 +11,44 @@ const Planets = () => {
       <h2>Planets</h2>
       <div className="row">
         {state.planets.map((planet) => (
-          <div className="col-md-4" key={planet.uid}>
+          <div className="col-md-4 mb-4" key={planet.uid}>
             <Card>
-              <Card.Img variant="top" src={`https://starwars-visualguide.com/assets/img/planets/${planet.uid}.jpg`} />
+              <Card.Img
+                variant="top"
+                src={`https://starwars-visualguide.com/assets/img/planets/${planet.uid}.jpg`}
+                onError={(e) =>
+                  (e.target.src = "https://starwars-visualguide.com/assets/img/big-placeholder.jpg")
+                }
+              />
               <Card.Body>
-                <Card.Title>{planet.name}</Card.Title>
-                <Button as={Link} to={`/details/planets/${planet.uid}`} variant="info">
+                <Card.Title>{planet.name || "Unnamed Planet"}</Card.Title>
+
+                <Button
+                  as={Link}
+                  to={`/details/planets/${planet.uid}`}
+                  variant="info"
+                  className="me-2"
+                >
                   View Details
                 </Button>
+
                 <Button
                   variant="primary"
-                  onClick={() => dispatch({ type: "TOGGLE_FAVORITE", payload: { id: planet.uid, name: planet.name, type: "planets" } })}
+                  onClick={() =>
+                    dispatch({
+                      type: "TOGGLE_FAVORITE",
+                      payload: {
+                        id: planet.uid,
+                        name: planet.name,
+                        type: "planets",
+                      },
+                    })
+                  }
                 >
-                  {state.favorites.some((fav) => fav.id === planet.uid && fav.type === "planets") 
-                    ? `Remove ${planet.name} from Favorites` 
+                  {state.favorites.some(
+                    (fav) => fav.id === planet.uid && fav.type === "planets"
+                  )
+                    ? `Remove ${planet.name} from Favorites`
                     : `Add ${planet.name} to Favorites`}
                 </Button>
               </Card.Body>
